@@ -1,5 +1,5 @@
 {
-	"name": "browser-run",
+	"name": "ostrich-browser-run",
 	"version": "0.1.0",
 	"main": "./lib.js",
 	"dependencies": {
