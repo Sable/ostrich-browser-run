@@ -14,7 +14,9 @@
 		"moment": ">= 2.10.6",
 		"mathjs": ">= 2.5.0",
 		"express": ">= 4.13.3",
-		"express-ws": ">= 1.0.0-rc.2",
-		"ostrich-twister-prng": "git://github.com/Sable/ostrich-twister-prng.js"
-	}
+		"express-ws": ">= 1.0.0-rc.2"
+	},
+    "scripts": {
+        "install": "git clone https://github.com/Sable/ostrich-twister-prng.js twister"
+    }
 }

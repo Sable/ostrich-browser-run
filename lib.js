@@ -42,7 +42,7 @@ if (parsed.help || missingArgument) {
 app.use('/page', express.static(path.join(__dirname, 'public')))
 app.use('/build', express.static(path.dirname(parsed.argv.remain[0]).toString()))
 app.use('/input', express.static(path.join(__dirname, 'input')))
-app.use('/prng', express.static(path.join(__dirname, 'node_modules', 'ostrich-twister-prng')))
+app.use('/prng', express.static(path.join(__dirname, 'twister')))
 
 function bashToJavaScript (a) {
   if (Number.parseInt(a, 10) || Number.parseFloat(a)) {
