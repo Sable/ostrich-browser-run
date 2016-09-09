@@ -39,9 +39,10 @@ if (parsed.help || missingArgument) {
   process.exit(1)
 }
 
-app.use('/page', express.static(path.join(__dirname, './public')))
+app.use('/page', express.static(path.join(__dirname, 'public')))
 app.use('/build', express.static(path.dirname(parsed.argv.remain[0]).toString()))
-app.use('/input', express.static(path.join(__dirname, './input')))
+app.use('/input', express.static(path.join(__dirname, 'input')))
+app.use('/prng', express.static(path.join(__dirname, 'node_modules', 'ostrich-twister-prng')))
 
 function bashToJavaScript (a) {
   if (Number.parseInt(a, 10) || Number.parseFloat(a)) {
@@ -141,13 +142,17 @@ app.ws('/socket', function (ws, req) {
   )
 
   // Determine files to load
-  var modules = ['/input/args.js']
+  var modules = [
+      '/input/args.js',
+      '/prng/ostrich-twister-prng-UMD.js'
+  ]
   if (!parsed.expression) {
     modules.push(path.join('/build', path.basename(parsed.argv.remain[0])))
   }
 
   // Generate code to run. First load dependencies, then execute the code
-  var code = 'requirejs([' + modules.map(JSON.stringify).join(',') + '], function (args, benchmark) {\n' +
+  var code = 'requirejs([' + modules.map(JSON.stringify).join(',') + '], function (args, prng, benchmark) {\n' +
+    'Math.random = prng.random;\n' +
     parsed.expression + ';\n' +
     "try {\n" + 
     "  if (typeof runner === 'function' ) {\n" +
