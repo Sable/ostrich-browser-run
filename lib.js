@@ -143,8 +143,8 @@ app.ws('/socket', function (ws, req) {
 
   // Determine files to load
   var modules = [
-      '/input/args.js',
-      '/prng/ostrich-twister-prng-UMD.js'
+    '/input/args.js',
+    '/prng/ostrich-twister-prng-UMD.js'
   ]
   if (!parsed.expression) {
     modules.push(path.join('/build', path.basename(parsed.argv.remain[0])))
@@ -154,7 +154,7 @@ app.ws('/socket', function (ws, req) {
   var code = 'requirejs([' + modules.map(JSON.stringify).join(',') + '], function (args, prng, benchmark) {\n' +
     'Math.random = prng.random;\n' +
     parsed.expression + ';\n' +
-    "try {\n" + 
+    'try {\n' +
     "  if (typeof runner === 'function' ) {\n" +
     '    runner.apply(null, args)\n' +
     "    if (runner.toString().indexOf('server.done') === -1) {\n" +
@@ -246,21 +246,26 @@ app.ws('/socket', function (ws, req) {
 })
 
 exports.start = function (startCmd) {
+  var inputArgsFile = path.join(__dirname, 'input', 'args.js')
+  if (fs.existsSync(inputArgsFile)) {
+    fs.unlinkSync(inputArgsFile)
+  }
+
   app.listen(8080, function (err) {
     if (err) {
-        console.log(err)
-        process.exit(1)
+      console.log(err)
+      process.exit(1)
     }
     var cmd = startCmd + ' http://localhost:8080/page/run.html'
     if (parsed.verbose) {
-        console.log('executing ' + cmd)
+      console.log('executing ' + cmd)
     }
     var status = shelljs.exec(cmd, {silent: !parsed.verbose}, function (code, stdout, stderr) {
-        if (code !== 0) {
-          console.log("Execution error for '" + cmd + "':")
-          console.log(status.output)
-          process.exit(1)
-        }
+      if (code !== 0) {
+        console.log("Execution error for '" + cmd + "':")
+        console.log(status.output)
+        process.exit(1)
+      }
     })
   })
 }
