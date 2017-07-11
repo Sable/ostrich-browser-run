@@ -191,6 +191,11 @@ app.ws('/socket', function (ws, req) {
 });
 
 exports.start = function (startCmd) {
+  var inputArgsFile = path.join(__dirname, 'input', 'args.js');
+  if (fs.existsSync(inputArgsFile)) {
+    fs.unlinkSync(inputArgsFile);
+  }
+
   app.listen(8080, function (err) {
     if (err) {
       console.log(err);

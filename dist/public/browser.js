@@ -65,11 +65,16 @@ function connect() {
         server.log = function (s) {
             try {
                 var temp = JSON.parse(s);
-                browser.log("sent to server: " + s);
-                ws.send(JSON.stringify({
-                    'type': 'output',
-                    'output': s
-                }));
+                if ((typeof s === 'undefined' ? 'undefined' : _typeof(s)) === 'object') {
+                    browser.log("sent to server: " + s);
+
+                    ws.send(JSON.stringify({
+                        'type': 'output',
+                        'output': s
+                    }));
+                } else {
+                    browser.log(s);
+                }
             } catch (e) {
                 browser.log(s);
             }
@@ -138,7 +143,7 @@ function connect() {
 function runBenchmark(dependencies, expressions) {
     requirejs(dependencies, function (args, prng, benchmark) {
         Math.random = prng.random;
-        if (expressions) eval(expressions);
+        if (expressions) eval(expression);
         try {
             if (typeof runner === 'function') {
                 Promise.resolve(runner.apply(null, args)).then(function (resolve) {
