@@ -62,14 +62,21 @@ function connect() {
         browser.log("Connection opened");
         server.log = function (s) {
             try {
-                var temp = JSON.parse(s);
-                browser.log("sent to server: " + s)
-                ws.send(JSON.stringify({
-                    'type': 'output',
-                    'output': s
-                }))
+                var temp = JSON.parse(s)
+                if(typeof s === 'object')
+                {
+                   browser.log("sent to server: " + s)
+
+                    ws.send(JSON.stringify({
+                        'type': 'output',
+                        'output': s
+                    })) 
+                }else{
+                    browser.log(s)
+                }
+                
             } catch (e) {
-                browser.log(s);
+                browser.log(s)
             }
         }
 
