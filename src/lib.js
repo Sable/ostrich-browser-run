@@ -149,48 +149,7 @@ app.ws('/socket', function (ws, req) {
   if (!parsed.expression) {
     modules.push(path.join('/', path.basename(parsed.argv.remain[0])))
   }
-<<<<<<< HEAD:src/lib.js
   var cmd = JSON.stringify({ 'type': 'eval', 'code': {dependencies:modules,expressions:parsed.expression} })
-=======
-
-  // Generate code to run. First load dependencies, then execute the code
-  var code = 'requirejs([' + modules.map(JSON.stringify).join(',') + '], function (args, prng, benchmark) {\n' +
-    'Math.random = prng.random;\n' +
-    parsed.expression + ';\n' +
-    'try {\n' +
-    "  if (typeof runner === 'function' ) {\n" +
-    '    runner.apply(null, args)\n' +
-    "    if (runner.toString().indexOf('server.done') === -1) {\n" +
-    '        server.done()\n' +
-    '    }\n' +
-    '  }\n' +
-    "  else if (typeof run === 'function' ) {\n" +
-    '    run.apply(null, args)\n' +
-    "    if (run.toString().indexOf('server.done') === -1) {\n" +
-    '        server.done()\n' +
-    '    }\n' +
-    '  }\n' +
-    "  else if (typeof benchmark  === 'object' ) {\n" +
-    "    if (benchmark.hasOwnProperty('runner')) {\n" +
-    '      benchmark.runner.apply(null, args)\n' +
-    "      if (benchmark.runner.toString().indexOf('server.done') === -1) {\n" +
-    '          server.done()\n' +
-    '      }\n' +
-    '    }\n' +
-    "    else if (benchmark.hasOwnProperty('run')) {\n" +
-    '      benchmark.run.apply(null, args)\n' +
-    "      if (benchmark.run.toString().indexOf('server.done') === -1) {\n" +
-    '          server.done()\n' +
-    '      }\n' +
-    '    }\n' +
-    '  }\n' +
-    '} catch (e) {\n' +
-    '  server.log(e)\n' +
-    '  server.error(e.stack)\n' +
-    '}})'
-
-  var cmd = JSON.stringify({ 'type': 'eval', 'code': code })
->>>>>>> master:lib.js
   if (parsed.verbose) {
     console.log('Sending: ' + cmd)
   }
