@@ -2,6 +2,12 @@
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+    return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
 console.log('configuring requirejs');
 requirejs.config({
     baseUrl: '../'
@@ -163,7 +169,7 @@ function runBenchmark(dependencies, expressions) {
                     server.log("Error running benchmark: ", e);
                     server.error(e.stack);
                 });
-            } else if ((typeof benchmark === 'undefined' ? 'undefined' : _typeof2(benchmark)) === 'object') {
+            } else if ((typeof benchmark === 'undefined' ? 'undefined' : _typeof(benchmark)) === 'object') {
                 if (benchmark.hasOwnProperty('runner')) {
                     Promise.resolve(benchmark.runner.apply(null, args)).then(function (resolve) {
                         if (benchmark.runner.toString().indexOf('server.done') === -1) {
