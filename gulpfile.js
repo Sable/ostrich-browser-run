@@ -1,15 +1,17 @@
 var gulp = require("gulp");
 var babel = require("gulp-babel");
-
-gulp.task("default",["js","html","twister"] );
+var exec = require('child_process').exec;
+gulp.task("default",["js","html","twister", "input"] );
 gulp.task("js", function () {
   var jsCode = gulp.src(["./src/**/*.js","!./src/twister/*.js"])
     .pipe(babel())
     .pipe(gulp.dest("dist"));
 });
 gulp.task("twister", function () {
-  return gulp.src(["./src/twister/**/*.js"])
-    .pipe(gulp.dest("dist/twister"));
+  exec("git clone https://github.com/Sable/ostrich-twister-prng.js ./dist/twister");
+});
+gulp.task("input", function () {
+  exec("mkdir ./dist/input");
 });
 gulp.task('html',function()
 {
