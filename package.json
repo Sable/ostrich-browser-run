@@ -17,7 +17,7 @@
     "express-ws": ">= 1.0.0-rc.2"
   },
   "scripts": {
-    "install": "git clone https://github.com/Sable/ostrich-twister-prng.js ./dist/twister",
+    "install": "rm -rf ./dist/twister; git clone https://github.com/Sable/ostrich-twister-prng.js ./dist/twister",
     "babel": ""
   },
   "babel": {
