@@ -28,19 +28,19 @@ var missingArgument = (parsed.argv.remain.length < 1 && !parsed.expression)
 var firstArgumentIndex = parsed.expression ? 0 : 1
 
 if (parsed.help || missingArgument) {
-  var usage = 'usage: run [options] file [A [A ...]]\n\n' +
-    'Unified interface for running javascript functions in a browser.\n\n' +
-    'positional arguments:\n' +
-    '  file\t\tJavaScript file to execute in the browser\n' +
-    '  A\t\tpositional argument(s) to pass to the function\n\n' +
-    'optional arguments: \n' +
-    noptUsage(knownOpts, shortHands, description)
+  var usage = `usage: run [options] file [A [A ...]]
+    Unified interface for running javascript functions in a browser.
+    Positional arguments:
+      file   JavaScript file to execute in the browser
+      A      Positional argument(s) to pass to the function
+      optional arguments: 
+      noptUsage(knownOpts, shortHands, description)`
   console.log(usage)
   process.exit(1)
 }
 
-app.use('/page', express.static(path.join(__dirname, 'public')))
-app.use('/build', express.static(path.dirname(parsed.argv.remain[0]).toString()))
+app.use('/', express.static(path.join(__dirname, 'public')))
+app.use('/', express.static(path.dirname(parsed.argv.remain[0]).toString()))
 app.use('/input', express.static(path.join(__dirname, 'input')))
 app.use('/prng', express.static(path.join(__dirname, 'twister')))
 
@@ -131,7 +131,7 @@ function indent (x) {
 app.ws('/socket', function (ws, req) {
   // Serialize arguments to the input args file
   var args = ['var args = []']
-  parsed.argv.remain.slice(firstArgumentIndex).forEach(function (x, i) {
+  parsed.argv.original.slice(firstArgumentIndex).forEach(function (x, i) {
     args.push('args[' + i + '] = (' + bashToJavaScript(x) + ')')
   })
   args.push('return args')
@@ -147,46 +147,9 @@ app.ws('/socket', function (ws, req) {
     '/prng/ostrich-twister-prng-UMD.js'
   ]
   if (!parsed.expression) {
-    modules.push(path.join('/build', path.basename(parsed.argv.remain[0])))
+    modules.push(path.join('/', path.basename(parsed.argv.remain[0])))
   }
-
-  // Generate code to run. First load dependencies, then execute the code
-  var code = 'requirejs([' + modules.map(JSON.stringify).join(',') + '], function (args, prng, benchmark) {\n' +
-    'Math.random = prng.random;\n' +
-    parsed.expression + ';\n' +
-    'try {\n' +
-    "  if (typeof runner === 'function' ) {\n" +
-    '    runner.apply(null, args)\n' +
-    "    if (runner.toString().indexOf('server.done') === -1) {\n" +
-    '        server.done()\n' +
-    '    }\n' +
-    '  }\n' +
-    "  else if (typeof run === 'function' ) {\n" +
-    '    run.apply(null, args)\n' +
-    "    if (run.toString().indexOf('server.done') === -1) {\n" +
-    '        server.done()\n' +
-    '    }\n' +
-    '  }\n' +
-    "  else if (typeof benchmark  === 'object' ) {\n" +
-    "    if (benchmark.hasOwnProperty('runner')) {\n" +
-    '      benchmark.runner.apply(null, args)\n' +
-    "      if (benchmark.runner.toString().indexOf('server.done') === -1) {\n" +
-    '          server.done()\n' +
-    '      }\n' +
-    '    }\n' +
-    "    else if (benchmark.hasOwnProperty('run')) {\n" +
-    '      benchmark.run.apply(null, args)\n' +
-    "      if (benchmark.run.toString().indexOf('server.done') === -1) {\n" +
-    '          server.done()\n' +
-    '      }\n' +
-    '    }\n' +
-    '  }\n' +
-    '} catch (e) {\n' +
-    '  server.log(e)\n' +
-    '  server.error(e.stack)\n' +
-    '}})'
-
-  var cmd = JSON.stringify({ 'type': 'eval', 'code': code })
+  var cmd = JSON.stringify({ 'type': 'eval', 'code': {dependencies:modules,expressions:parsed.expression} })
   if (parsed.verbose) {
     console.log('Sending: ' + cmd)
   }
@@ -256,7 +219,7 @@ exports.start = function (startCmd) {
       console.log(err)
       process.exit(1)
     }
-    var cmd = startCmd + ' http://localhost:8080/page/run.html'
+    var cmd = startCmd + ' http://localhost:8080/run.html'
     if (parsed.verbose) {
       console.log('executing ' + cmd)
     }
