@@ -11,7 +11,7 @@ gulp.task("twister", function () {
   exec("git clone https://github.com/Sable/ostrich-twister-prng.js ./dist/twister");
 });
 gulp.task("input", function () {
-  exec("mkdir ./dist/input");
+ return gulp.src('./src/input/**').pipe(gulp.dest('./dist/input'));
 });
 gulp.task('html',function()
 {
